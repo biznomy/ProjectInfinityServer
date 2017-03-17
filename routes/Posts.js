@@ -2,14 +2,17 @@ var express = require('express');
 var router = express.Router();
 var PostController = require('../controllers/PostController.js');
 
-router.get('/', function (req, res) {PostController.list(req, res);});
 
-router.get('/:id', function (req, res) {PostController.show(req, res);});
+router.get('/', function(req, res) {
+    PostController.list(req, res);
+});
 
-router.post('/', function (req, res) {PostController.create(req, res);});
+router.get('/:id', function(req, res) { PostController.show(req, res); });
 
-router.put('/:id', function (req, res) {PostController.update(req, res);});
+router.post('/', function(req, res) { PostController.create(req, res); });
 
-router.get('/:id/delete', function (req, res) {PostController.remove(req, res);});
+router.put('/:id', function(req, res) { PostController.update(req, res); });
+
+router.get('/:id/delete', function(req, res) { PostController.remove(req, res); });
 
 module.exports = router;

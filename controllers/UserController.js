@@ -8,7 +8,7 @@ module.exports = {
         if (req.error) {
             return res.status(403).json(req.error);
         }
-        UserModel.find(function(err, Users) {
+        UserModel.find().populate({ path: 'files', select: "_id name size url type" }).exec(function(err, Users) {
             if (err) {
                 return res.status(500).json({
                     message: 'Error when getting User.',

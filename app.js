@@ -52,7 +52,7 @@ app.use(function(req, res, next) {
 });
 
 
-app.use('/user', Users);
+app.use('/users', Users);
 app.use('/posts', Posts);
 app.use('/like', Likes);
 app.use('/comment', Comments);

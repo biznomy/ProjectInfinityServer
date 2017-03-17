@@ -29,7 +29,7 @@ module.exports = {
                         error: err
                     });
                 }
-                return res.json(Posts);
+                return res.json({status:true,result:Posts});
             });
     },
 
