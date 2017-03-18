@@ -1,9 +1,11 @@
 var express = require('express');
+var connect = require('connect');
 var path = require('path');
 var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
+var fs = require('fs');
 var router = express.Router();
 var CONSTANT = require("./util/Constant");
 var app = express();
@@ -24,7 +26,11 @@ app.set('view engine', 'jade');
 
 app.use(logger('dev'));
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.urlencoded({limit: '50mb',extended: true,parameterLimit:50000}));
+
+// parse some custom thing into a Buffer
+//app.use(bodyParser.raw({ type: 'application/vnd.custom-type' }))
+
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'uploads')));
 
@@ -57,6 +63,14 @@ app.use('/posts', Posts);
 app.use('/like', Likes);
 app.use('/comment', Comments);
 app.use('/friend', Friends);
+app.use("/uploads/:imagename", function(req, res, next){
+    //console.log(req.params.imagename);
+    var img = fs.readFileSync('./uploads/'+req.params.imagename);
+    res.writeHead(200, {'Content-Type': 'image/*' });
+    res.end(img, 'binary');    
+});
+
+
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

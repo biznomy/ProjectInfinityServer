@@ -7,7 +7,7 @@ var FileUploader = {
             callback(null, 'uploads/');
         },
         filename: function(request, file, callback) {
-            var n = Date.now() + "__" +file.originalname;
+            var n = Date.now() + "__" +file.originalname.split(' ').join('');
             callback(null, n);
         },
         onError:function(e){
@@ -16,7 +16,7 @@ var FileUploader = {
     },
     init: function() {
     	var self = this;
-        self.store = multer({ "storage": multer.diskStorage(self.option)});
+        self.store = multer({ "storage": multer.diskStorage(self.option), limits: {fileSize: 1000000, files:1}});
     }
 };
 

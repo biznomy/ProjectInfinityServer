@@ -91,7 +91,7 @@ module.exports = {
 
             if (req.file && req.file != '') {
                 var data = {
-                    name: req.file.originalname,
+                    name: req.file.originalname.split(' ').join(''),
                     type: req.file.mimetype,
                     size: req.file.size,
                     url: req.file.path,

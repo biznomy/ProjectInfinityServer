@@ -32,7 +32,7 @@ module.exports = {
         });
     },
     _create :function(data,cb){
-        data.url = "file:///media/ubuntu/5004531904530180/Projects/nodejs/ProjectInfinity/" + data.url;
+        data.url = "http://192.168.1.4:3000/"+data.url;        
       var File = new FileModel(data);
         File.save(function (err, File) {
             if (err) {
