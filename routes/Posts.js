@@ -7,6 +7,10 @@ router.get('/', function(req, res) {
     PostController.list(req, res);
 });
 
+router.get('/timeline', function(req, res) {
+    PostController.timeline(req, res);
+});
+
 router.get('/:id', function(req, res) { PostController.show(req, res); });
 
 router.post('/', function(req, res) { PostController.create(req, res); });

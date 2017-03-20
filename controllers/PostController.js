@@ -1,10 +1,10 @@
 var PostModel = require('../models/PostModel.js');
+var FriendModel = require('../models/FriendModel.js');
 var FileUploader = require("../util/FileUploader");
 var FileController = require("./FileController");
 
 
 module.exports = {
-
 
     list: function(req, res) {
         if (req.error) {
@@ -29,8 +29,54 @@ module.exports = {
                         error: err
                     });
                 }
-                return res.json({status:true,result:Posts});
+                return res.json({ status: true, result: Posts });
             });
+    },
+
+    timeline: function(req, res) {
+        if (req.error) {
+            return res.status(403).json(req.error);
+        }
+        var myId = req["me"]["__id"];
+        FriendModel.find({ "status": "friend", "$or": [{ "user1": myId }, { "user2": myId }] }).select("user1 user2").exec(function(err, data) {
+            if (data) {
+                var ids = [];
+                for (var i = 0; i < data.length; i++) {
+                    var u1 = '"'+myId+'"',u2 = '"'+myId+'"';
+                    if(u1 === u2){
+                        console.log("=============");
+                        ids.push(data[i].user2);
+                    }else{
+                        ids.push(data[i].user1);
+                    }
+                }
+                ids.push(myId);
+                console.log(ids);
+                PostModel.find({ "created_by": { "$in": ids } })
+                    .populate({ path: 'files', select: "_id name size url type" })
+                    .populate({ path: 'created_by', select: "_id name photoURL" })
+                    .populate({
+                        path: 'comments',
+                        select: "description user_id",
+                        model: "Comment",
+                        populate: {
+                            path: 'user_id',
+                            select: "_id name photoURL",
+                            model: "User"
+                        }
+                    }).sort({"created_at":-1}).limit(10).exec(function(err, Posts) {
+                        if (err) {
+                            return res.status(500).json({
+                                message: 'Error when getting Post.',
+                                error: err
+                            });
+                        }
+                        return res.json({ status: true, result: Posts });
+                    });
+            } else {
+                return res.json({ status: true, result: [] });
+            }
+        });
     },
 
     show: function(req, res) {
