@@ -11,10 +11,6 @@ router.get('/:id', function(req, res) {
     UserController.show(req, res);
 });
 
-/*router.post('/', function (req, res) {
-    UserController.create(req, res);
-});*/
-
 router.get('/user/uid/:uid', function(req, res) {
     UserController.getByUidFromFirebase(req, res);
 });

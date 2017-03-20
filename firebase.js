@@ -14,7 +14,7 @@ var FIREBASE = {
     verifyIdToken: function(idToken, cb) {
         if (!idToken || idToken == "") {
             cb({ "status": false, 'message': "Token Not Found" });
-            return ;
+            return;
         }
         admin.auth().verifyIdToken(idToken).then(function(decodedToken) {
             FIREBASE.getByUidFromLocal({}, function(rs) {
@@ -22,7 +22,7 @@ var FIREBASE = {
                     decodedToken["__id"] = rs.result._id;
                 }
                 cb({ "status": true, 'result': decodedToken });
-            },decodedToken.uid);
+            }, decodedToken.uid);
         }).catch(function(error) {
             cb({ "status": false, 'result': error });
         });
@@ -48,7 +48,7 @@ var FIREBASE = {
             cb({ status: false, result: error });
         });
     },
-    getByUidFromLocal: function(req,cb, uid) {
+    getByUidFromLocal: function(req, cb, uid) {
         if (req.error) {
             res.status(403).json(req.error);
             return;
@@ -71,6 +71,21 @@ var FIREBASE = {
             cb({ status: false, result: error });
         });
     },
+    createNewUser(d,cb) {
+        admin.auth().createUser({
+                email: d.email,
+                emailVerified: false,
+                password: d.password,
+                displayName: d.displayName,
+                photoURL: d.photoURL,
+                disabled: false
+            })
+            .then(function(userRecord) {
+                cb({ status: true, result: userRecord.providerData });
+            }).catch(function(error) {
+                cb({ status: false, result: error });
+            });
+    }
 };
 
 FIREBASE.init();

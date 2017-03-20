@@ -17,6 +17,7 @@ var Posts = require('./routes/Posts');
 var Likes = require('./routes/Likes');
 var Comments = require('./routes/Comments');
 var Friends = require('./routes/Friends');
+var Fcm = require('./routes/Fcm');
 
 
 // view engine setup
@@ -40,6 +41,8 @@ app.all('*', function(req, res, next) {
     next();
 });
 
+
+app.use('/fcm/signup', Fcm);
 
 app.use(function(req, res, next) {
     try{

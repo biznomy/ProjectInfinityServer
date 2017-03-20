@@ -40,6 +40,10 @@ module.exports = {
         });
     },
 
+    createNew:function(){
+
+    },
+
     create: function(req, res) {
         var User = new UserModel(req.body);
 
