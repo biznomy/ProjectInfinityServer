@@ -8,7 +8,7 @@ var FIREBASE = {
     init: function() {
         admin.initializeApp({
             credential: admin.credential.cert(serviceAccount),
-            databaseURL: "https://project0-6ce96.firebaseio.com"
+            databaseURL: CONSTANT.DATABASE_URL
         });
     },
     verifyIdToken: function(idToken, cb) {
