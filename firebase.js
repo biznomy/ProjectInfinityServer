@@ -17,12 +17,14 @@ var FIREBASE = {
             return;
         }
         admin.auth().verifyIdToken(idToken).then(function(decodedToken) {
+            console.log(decodedToken);
             FIREBASE.getByUidFromLocal({}, function(rs) {
+                console.log(rs.result);
                 if (rs.status) {
                     decodedToken["__id"] = rs.result._id;
                 }
                 cb({ "status": true, 'result': decodedToken });
-            }, decodedToken.uid);
+            }, decodedToken.uid,decodedToken.email);
         }).catch(function(error) {
             cb({ "status": false, 'result': error });
         });
@@ -48,7 +50,7 @@ var FIREBASE = {
             cb({ status: false, result: error });
         });
     },
-    getByUidFromLocal: function(req, cb, uid) {
+    getByUidFromLocal: function(req, cb, uid, email) {
         if (req.error) {
             res.status(403).json(req.error);
             return;
@@ -56,7 +58,13 @@ var FIREBASE = {
         if (!uid) {
             uid = req["me"].uid;
         }
-        UserModel.findOne({ "uid": uid }, function(err, result) {
+        var dd = { "uid": uid };
+        if(email){
+            var t =[];
+            t.push(dd);t.push({"email":email});
+            dd = {"$or":t};
+        }
+        UserModel.findOne(dd, function(err, result) {
             if (err || !result) {
                 cb({ status: false, result: err });
             } else {
