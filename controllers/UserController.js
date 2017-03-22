@@ -141,6 +141,6 @@ module.exports = {
             } else {
                 self.create(req, res);
             }
-        });
+        },req.body["uid"],req.body["email"]);
     }
 };
