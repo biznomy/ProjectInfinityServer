@@ -61,6 +61,7 @@ module.exports = {
     _update: function(req,res, User) {
         User.dob = req.body.dob ? req.body.dob : User.dob;
         User.name = req.body.name ? req.body.name : User.name;
+        User.bio = req.body.bio ? req.body.bio : User.bio;
         User.photoURL = req.body.photoURL ? req.body.photoURL : User.photoURL;
         User.uid = req.body.uid ? req.body.uid : User.uid;
         User.phone = req.body.phone ? req.body.phone : User.phone;
@@ -71,6 +72,9 @@ module.exports = {
         User.country = req.body.country ? req.body.country : User.country;
         User.pincode = req.body.pincode ? req.body.pincode : User.pincode;
         User.cover = req.body.cover ? req.body.cover : User.cover;
+        User.gender = req.body.gender ? req.body.gender : User.gender;
+        User.hobbies = req.body.hobbies ? req.body.hobbies : User.hobbies;
+        User.currentLocation = req.body.currentLocation ? req.body.currentLocation : User.currentLocation;
         User.regid = req.body.regid || req.body.regid == "" ? req.body.regid : User.regid;
         
         User.save(function(err, User) {
