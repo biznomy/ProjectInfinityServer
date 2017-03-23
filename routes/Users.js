@@ -3,7 +3,7 @@ var router = express.Router();
 var UserController = require('../controllers/UserController.js');
 
 
-router.get('/', function(req, res) {
+router.get('/suggestion/list', function(req, res) {
     UserController.list(req, res);
 });
 

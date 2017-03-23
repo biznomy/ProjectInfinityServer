@@ -75,7 +75,6 @@ module.exports = {
     },
     _create: function(req, res) {
         var Post = new PostModel({
-            title: req.body.title,
             description: req.body.description,
             files: req.body.files,
             created_by: req["me"]["__id"],
@@ -152,7 +151,6 @@ module.exports = {
                 });
             }
 
-            Post.title = req.body.title ? req.body.title : Post.title;
             Post.description = req.body.description ? req.body.description : Post.description;
             Post.files = req.body.files ? req.body.files : Post.files;
             Post.created_by = req.body.created_by ? req.body.created_by : Post.created_by;
