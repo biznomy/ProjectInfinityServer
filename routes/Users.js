@@ -4,7 +4,7 @@ var UserController = require('../controllers/UserController.js');
 
 
 router.get('/suggestion/list', function(req, res) {
-    UserController.list(req, res);
+    UserController.suggestion(req, res);
 });
 
 router.get('/:id', function(req, res) {

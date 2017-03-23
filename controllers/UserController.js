@@ -1,6 +1,7 @@
 var UserModel = require('../models/UserModel.js'),
     FIREBASE = require('../firebase'),
-    UserModel = require("../models/UserModel");;
+    FriendModel = require('../models/FriendModel.js'),
+    UserModel = require("../models/UserModel");
 
 module.exports = {
 
@@ -8,23 +9,44 @@ module.exports = {
         if (req.error) {
             return res.status(403).json(req.error);
         }
-        UserModel.find().populate({ path: 'files', select: "_id name size url type" }).exec(function(err, Users) {
+
+        var myId = req["me"]["__id"],
+            self = this;
+            FriendModel.find({ "user1": { "$ne": myId }, "user2": { "$ne": myId } }).select("user1 user2").limit(5).exec(function(err, data) {
+                if (!err) {
+                    if (data.length > 0) {
+                      var ids =[];
+                      for(var i=0;i<data.length;i++){
+                        ids.push(data[i].user1);
+                        ids.push(data[i].user2);
+                      }
+                      self._list(req, res,{"$in":ids});
+                    } else {
+                       self._list(req, res,{"$ne":myId});
+                    }
+                } else {
+                    return res.json({ status: false, result: [] });
+                }
+            });
+    },
+    _list: function(req, res, ids) {
+        var select = "_id name photoURL email gender";
+        UserModel.find({ "_id": ids }).select(select).limit(10).exec(function(err, suggestion) {
             if (err) {
                 return res.status(500).json({
-                    message: 'Error when getting User.',
+                    message: 'Error when getting suggestion.',
                     error: err
                 });
             }
-            return res.json(Users);
+            return res.json({ status: true, result: suggestion });
         });
     },
-
     show: function(req, res) {
         if (req.error) {
             return res.status(403).json(req.error);
         }
         var id = req.params.id;
-        UserModel.findOne({ _id: id }.populate({ path: 'files', select: "_id name size url type" }).exec(function(err, User) {
+        UserModel.findOne({ _id: id }, function(err, User) {
             if (err) {
                 return res.status(500).json({
                     message: 'Error when getting User.',
@@ -40,7 +62,7 @@ module.exports = {
         });
     },
 
-    createNew:function(){
+    createNew: function() {
 
     },
 
@@ -58,7 +80,7 @@ module.exports = {
         });
     },
 
-    _update: function(req,res, User) {
+    _update: function(req, res, User) {
         User.dob = req.body.dob ? req.body.dob : User.dob;
         User.name = req.body.name ? req.body.name : User.name;
         User.bio = req.body.bio ? req.body.bio : User.bio;
@@ -76,7 +98,7 @@ module.exports = {
         User.hobbies = req.body.hobbies ? req.body.hobbies : User.hobbies;
         User.currentLocation = req.body.currentLocation ? req.body.currentLocation : User.currentLocation;
         User.regid = req.body.regid || req.body.regid == "" ? req.body.regid : User.regid;
-        
+
         User.save(function(err, User) {
             if (err) {
                 return res.status(500).json({
@@ -114,13 +136,13 @@ module.exports = {
         });
     },
     sendPushNotification: function(req, res) {
-        FIREBASE.getByUidFromLocal(req,function(rs) {
+        FIREBASE.getByUidFromLocal(req, function(rs) {
             if (rs.status && rs.result.regid != '') {
                 req.body["to"] = rs.result.regid;
                 delete req.body["uid"];
                 req.body['notification']["icon"] = "/firebase-logo.png";
                 req.body['notification']["click_action"] = "http://localhost/html/FCM/web/social-login/";
-               console.log(req.body);
+                console.log(req.body);
                 FIREBASE.sendNotification(req.body, function(body) {
                     res.status(200).json(body);
                 });
@@ -131,16 +153,16 @@ module.exports = {
                 }
                 res.status(200).json(rs);
             }
-        },req.body["uid"]);
+        }, req.body["uid"]);
     },
-    saveOrUpdate:function(req,res) {
+    saveOrUpdate: function(req, res) {
         var self = this;
         FIREBASE.getByUidFromLocal(req, function(rs) {
             if (rs.status) {
-                self._update(req,res,rs.result);
+                self._update(req, res, rs.result);
             } else {
                 self.create(req, res);
             }
-        },req.body["uid"],req.body["email"]);
+        }, req.body["uid"], req.body["email"]);
     }
 };

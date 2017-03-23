@@ -2,13 +2,22 @@ var FriendModel = require('../models/FriendModel.js');
 
 module.exports = {
 
-    _find: function(query, cb) {
+    _find: function(query, cb,idd) {
+        idd = "'"+idd+"'";
         FriendModel.find(query).populate({ path: 'user1', select: "_id name photoURL" })
             .populate({ path: 'user2', select: "_id name photoURL" }).exec(function(err, Friends) {
                 if (err) {
                     cb(false, Friends);
                 }
-                cb(true, Friends);
+                var frnds = Friends.map(function(f){
+                var s1= "'"+f.user1._id+"'",s2 = "'"+f.user2._id+"'";
+                   if(idd == s1){
+                      return f.user2;
+                   }else{
+                      return f.user1;
+                   }
+                });
+                cb(true, frnds);
             });
     },
 
@@ -37,7 +46,7 @@ module.exports = {
             } else {
                 return res.status(200).json({ status: s, result: r });
             }
-        });
+        },id);
 
     },
 
@@ -51,7 +60,7 @@ module.exports = {
             } else {
                 return res.status(200).json({ status: s, result: r });
             }
-        });
+        },id);
     },
 
     getRequests: function(req, res,type) {
@@ -65,7 +74,7 @@ module.exports = {
             } else {
                 return res.status(200).json({ status: s, result: r });
             }
-        });
+        },id);
     },
 
     blockOrAccept: function(req, res, type) {
@@ -128,7 +137,7 @@ module.exports = {
             } else {
                 return res.status(200).json({ status: s, result: r });
             }
-        });
+        },id);
     },
 
     unFriend: function(req, res) {

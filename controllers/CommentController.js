@@ -58,7 +58,7 @@ module.exports = {
             }
             PostModel.findOne({"_id":req.body.post_id},function(err, post) {
               if (post) {
-                if(post.comments <= 3){
+                if(post.comments.length >= 3){
                     post.comments.shift();
                 }
                 post.comments.push(Comment._id);
