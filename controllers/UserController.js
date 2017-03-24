@@ -46,7 +46,10 @@ module.exports = {
             return res.status(403).json(req.error);
         }
         var id = req.params.id;
-        UserModel.findOne({ _id: id }, function(err, User) {
+        if(id == "me"){
+           id = req["me"]["__id"];
+        }
+        UserModel.findOne({ _id: id }).populate({ path: 'cover', select: "_id name size url type" }).exec(function(err, User) {
             if (err) {
                 return res.status(500).json({
                     message: 'Error when getting User.',
