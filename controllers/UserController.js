@@ -29,6 +29,9 @@ module.exports = {
                 }
             });
     },
+    locationSearch:function(req, res){
+       
+    },
     _list: function(req, res, ids) {
         var select = "_id name photoURL email gender";
         UserModel.find({ "_id": ids }).select(select).limit(10).exec(function(err, suggestion) {
