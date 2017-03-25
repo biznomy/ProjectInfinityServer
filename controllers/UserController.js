@@ -9,9 +9,6 @@ module.exports = {
         if (req.error) {
             return res.status(403).json(req.error);
         }
-        var page = req.query.page ? req.query.page - 1 : 0,
-            limit = req.query.limit ? req.query.limit : 5,
-            skip = page * limit;
         var myId = req["me"]["__id"],
             self = this;
         FriendModel.find({ "user1": { "$ne": myId }, "user2": { "$ne": myId } }).select("user1 user2").limit(5).exec(function(err, data) {
@@ -43,7 +40,7 @@ module.exports = {
         res.query.minDis = res.query.minDis ? res.query.minDis : 10;
         res.query.maxDis = res.query.maxDis ? res.query.maxDis : 1000;
         var q = { "currentLocation": { "$near": { "$geometry": { "type": "Point", "coordinates":location }, "$minDistance": res.query.minDis, "$maxDistance": res.query.maxDis } } }
-        UserModel.find(q,function(err,nearUsers) {
+        UserModel.find(q).skip(Number(skip)).limit(Number(limit)).exec(function(err,nearUsers) {
             if(err){
                 return res.status(500).json({
                     status: false,
@@ -56,9 +53,6 @@ module.exports = {
     },
     _list: function(req, res, ids) {
         var select = "_id name photoURL email gender";
-        var page = req.query.page ? req.query.page - 1 : 0,
-            limit = req.query.limit ? req.query.limit : 5,
-            skip = page * limit;
         UserModel.find({ "_id": ids }).select(select).limit(10).exec(function(err, suggestion) {
             if (err) {
                 return res.status(500).json({

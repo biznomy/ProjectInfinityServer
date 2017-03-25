@@ -37,13 +37,16 @@ module.exports = {
         });
     },
     _list: function(req, res,by) {
+        var page = req.query.page ? req.query.page - 1 : 0,
+            limit = req.query.limit ? req.query.limit : 5,
+            skip = page * limit;
         PostModel.find({ "created_by":by})
             .populate({ path: 'files', select: "_id name size url type" })
             .populate({ path: 'created_by', select: "_id name photoURL" })
             .populate({
                 path: 'comments',select: "description user_id",model: "Comment",
                 populate: {path: 'user_id',select: "_id name photoURL",model: "User"}
-            }).sort({ "created_at": -1 }).limit(10).exec(function(err, Posts) {
+            }).sort({ "created_at": -1 }).skip(Number(skip)).limit(Number(limit)).exec(function(err, Posts) {
                 if (err) {
                     return res.status(500).json({
                         message: 'Error when getting Post.',
@@ -100,7 +103,6 @@ module.exports = {
         }
         var self = this;
         FileUploader.store.single('files')(req, res, function(err) {
-            console.log(req.body);
             if (err) {
                 return res.status(500).json({
                     message: 'Error when creating Post',
@@ -177,14 +179,16 @@ module.exports = {
             return res.status(403).json(req.error);
         }
         var id = req.params.id;
-        PostModel.findByIdAndRemove(id, function(err, Post) {
+
+        PostModel.remove({"_id": id ,"created_by":req["me"]["__id"]}, function (err) {
             if (err) {
                 return res.status(500).json({
+                    status:false,
                     message: 'Error when deleting the Post.',
                     error: err
                 });
             }
-            return res.status(204).json();
+            return res.status(200).json({status:true,message:"Delete Post Successfully"});
         });
     }
 };
