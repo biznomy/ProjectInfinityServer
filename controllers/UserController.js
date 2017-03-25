@@ -9,34 +9,60 @@ module.exports = {
         if (req.error) {
             return res.status(403).json(req.error);
         }
-
+        var page = req.query.page ? req.query.page - 1 : 0,
+            limit = req.query.limit ? req.query.limit : 5,
+            skip = page * limit;
         var myId = req["me"]["__id"],
             self = this;
-            FriendModel.find({ "user1": { "$ne": myId }, "user2": { "$ne": myId } }).select("user1 user2").limit(5).exec(function(err, data) {
-                if (!err) {
-                    if (data.length > 0) {
-                      var ids =[];
-                      for(var i=0;i<data.length;i++){
+        FriendModel.find({ "user1": { "$ne": myId }, "user2": { "$ne": myId } }).select("user1 user2").limit(5).exec(function(err, data) {
+            if (!err) {
+                if (data.length > 0) {
+                    var ids = [];
+                    for (var i = 0; i < data.length; i++) {
                         ids.push(data[i].user1);
                         ids.push(data[i].user2);
-                      }
-                      self._list(req, res,{"$in":ids});
-                    } else {
-                       self._list(req, res,{"$ne":myId});
                     }
+                    self._list(req, res, { "$in": ids });
                 } else {
-                    return res.json({ status: false, result: [] });
+                    self._list(req, res, { "$ne": myId });
                 }
-            });
+            } else {
+                return res.json({ status: false, result: [] });
+            }
+        });
     },
-    locationSearch:function(req, res){
-       
+    locationSearch: function(req, res) {
+        if (req.error) {
+            return res.status(403).json(req.error);
+        }
+        var page = req.query.page ? req.query.page - 1 : 0,
+            limit = req.query.limit ? req.query.limit : 5,
+            skip = page * limit;
+
+        var location = res.query.lat && res.query.long ? [res.query.long, res.query.lat] : res["me"].currentLocation.coordinates;
+        res.query.minDis = res.query.minDis ? res.query.minDis : 10;
+        res.query.maxDis = res.query.maxDis ? res.query.maxDis : 1000;
+        var q = { "currentLocation": { "$near": { "$geometry": { "type": "Point", "coordinates":location }, "$minDistance": res.query.minDis, "$maxDistance": res.query.maxDis } } }
+        UserModel.find(q,function(err,nearUsers) {
+            if(err){
+                return res.status(500).json({
+                    status: false,
+                    message: 'Error when getting users.',
+                    error: err
+                });
+            }
+            return res.json({ status: true, result: nearUsers });
+        })
     },
     _list: function(req, res, ids) {
         var select = "_id name photoURL email gender";
+        var page = req.query.page ? req.query.page - 1 : 0,
+            limit = req.query.limit ? req.query.limit : 5,
+            skip = page * limit;
         UserModel.find({ "_id": ids }).select(select).limit(10).exec(function(err, suggestion) {
             if (err) {
                 return res.status(500).json({
+                    status: false,
                     message: 'Error when getting suggestion.',
                     error: err
                 });
@@ -49,8 +75,8 @@ module.exports = {
             return res.status(403).json(req.error);
         }
         var id = req.params.id;
-        if(id == "me"){
-           id = req["me"]["__id"];
+        if (id == "me") {
+            id = req["me"]["__id"];
         }
         UserModel.findOne({ _id: id }).populate({ path: 'cover', select: "_id name size url type" }).exec(function(err, User) {
             if (err) {
@@ -66,10 +92,6 @@ module.exports = {
             }
             return res.json(User);
         });
-    },
-
-    createNew: function() {
-
     },
 
     create: function(req, res) {

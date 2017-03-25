@@ -22,6 +22,7 @@ var FIREBASE = {
                 // console.log(rs.result);
                 if (rs.status) {
                     decodedToken["__id"] = rs.result._id;
+                    decodedToken["currentLocation"] = rs.result.currentLocation;
                 }
                 cb({ "status": true, 'result': decodedToken });
             }, decodedToken.uid, decodedToken.email);
@@ -62,7 +63,8 @@ var FIREBASE = {
         if (email) {
             var t = [];
             t.push(dd);
-            t.push({ "email": email });
+            var regex = new RegExp(["^", email, "$"].join(""), "i");
+            t.push({ "email": regex });
             dd = { "$or": t };
         }
         UserModel.findOne(dd, function(err, result) {
