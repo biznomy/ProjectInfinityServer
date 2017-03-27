@@ -35,12 +35,16 @@ module.exports = {
         var page = req.query.page ? req.query.page - 1 : 0,
             limit = req.query.limit ? req.query.limit : 5,
             skip = page * limit;
-
-        var location = res.query.lat && res.query.long ? [res.query.long, res.query.lat] : res["me"].currentLocation.coordinates;
-        res.query.minDis = res.query.minDis ? res.query.minDis : 10;
-        res.query.maxDis = res.query.maxDis ? res.query.maxDis : 1000;
-        var q = { "currentLocation": { "$near": { "$geometry": { "type": "Point", "coordinates":location }, "$minDistance": res.query.minDis, "$maxDistance": res.query.maxDis } } }
-        UserModel.find(q).skip(Number(skip)).limit(Number(limit)).exec(function(err,nearUsers) {
+        var select = "_id name photoURL email gender";
+        var location = req.query.lat && req.query.long ? [req.query.long, req.query.lat] : req["me"].currentLocation.coordinates;
+        req.query.minDis = req.query.minDis ? req.query.minDis : 10;
+        req.query.maxDis = req.query.maxDis ? req.query.maxDis : 1000;
+        var searchString = req.query.searchString ?{'$search': req.query.searchString}:null;
+        var q = {"currentLocation": { "$near": { "$geometry": { "type": "Point", "coordinates":location }, "$minDistance": req.query.minDis, "$maxDistance": req.query.maxDis } } }
+        if(searchString){
+            q['$text'] = searchString;
+        }
+        UserModel.find(q).select(select).skip(Number(skip)).limit(Number(limit)).exec(function(err,nearUsers) {
             if(err){
                 return res.status(500).json({
                     status: false,

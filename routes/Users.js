@@ -7,7 +7,7 @@ router.get('/suggestion/list', function(req, res) {
     UserController.suggestion(req, res);
 });
 
-router.post('/location/search', function(req, res) {
+router.get('/location/search', function(req, res) {
     UserController.locationSearch(req, res);
 });
 

@@ -3,7 +3,7 @@ var router = express.Router();
 var PostController = require('../controllers/PostController.js');
 
 
-router.get('/timeline', function(req, res) {
+router.get('/timeline/:id', function(req, res) {
     PostController.timeline(req, res);
 });
 

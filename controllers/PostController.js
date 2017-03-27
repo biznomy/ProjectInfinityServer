@@ -10,7 +10,11 @@ module.exports = {
         if (req.error) {
             return res.status(403).json(req.error);
         }
-        this._list(req,res,req["me"]["__id"]);
+        var id = req.params.id;
+        if (id == "me") {
+            id = req["me"]["__id"];
+        }
+        this._list(req,res,id);
     },
 
     wall: function(req, res) {
