@@ -7,8 +7,8 @@ router.get('/suggestion/list', function(req, res) {
     UserController.suggestion(req, res);
 });
 
-router.get('/location/search', function(req, res) {
-    UserController.locationSearch(req, res);
+router.get('/search', function(req, res) {
+    UserController.search(req, res);
 });
 
 router.get('/:id', function(req, res) {

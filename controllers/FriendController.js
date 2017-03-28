@@ -21,7 +21,9 @@ module.exports = {
                             return f.user1;
                         }
                     });
-                    cb(true, frnds);
+                    FriendModel.count(query).exec(function(e, count) {
+                        cb({ 'status': true, 'result': frnds, 'count': count });
+                    });
                 }
 
             });
@@ -42,17 +44,14 @@ module.exports = {
     friends: function(req, res) {
 
         if (req.error) {
-            return res.status(403).json(req.error); }
+            return res.status(403).json(req.error);
+        }
 
         var id = req["me"]["__id"],
             q = { "$and": [{ "$or": [{ "user1": id }, { "user2": id }] }, { "status": "friend" }] };
 
-        this._find(req, q, function(s, r) {
-            if (s) {
-                return res.status(200).json({ status: s, result: r });
-            } else {
-                return res.status(200).json({ status: s, result: r });
-            }
+        this._find(req, q, function(r) {
+            return res.status(200).json(r);
         }, id);
 
     },
@@ -62,27 +61,20 @@ module.exports = {
             return res.status(403).json(req.error);
         }
         var id = req["me"]["__id"];
-        this._find(req, { "$and": [{ "$or": [{ "user1": id }, { "user2": id }] }, { "status": "block" }] }, function(s, r) {
-            if (s) {
-                return res.status(200).json({ status: s, result: r });
-            } else {
-                return res.status(200).json({ status: s, result: r });
-            }
+        this._find(req, { "$and": [{ "$or": [{ "user1": id }, { "user2": id }] }, { "status": "block" }] }, function(r) {
+            return res.status(200).json(r);
         }, id);
     },
 
     getRequests: function(req, res, type) {
         if (req.error) {
-            return res.status(403).json(req.error); }
+            return res.status(403).json(req.error);
+        }
         var id = req["me"]["__id"],
             q = { "status": "request" };
         q[type] = id;
-        this._find(req, q, function(s, r) {
-            if (s) {
-                return res.status(200).json({ status: s, result: r });
-            } else {
-                return res.status(200).json({ status: s, result: r });
-            }
+        this._find(req, q, function(r) {
+            return res.status(200).json(r);
         }, id);
     },
 
@@ -113,46 +105,44 @@ module.exports = {
 
     senReq: function(req, res) {
         if (req.error) {
-            return res.status(403).json(req.error); }
+            return res.status(403).json(req.error);
+        }
 
         var id = req["me"]["__id"],
             friendId = req.params.friendId;
         var q = { "$or": [{ "$and": [{ "user1": id }, { "user2": friendId }] }, { "$and": [{ "user2": id }, { "user1": friendId }] }] };
-        this._find(req, q, function(s, r) {
-            if (s) {
-                if (r.length == 0) {
-                    var Friend = new FriendModel({
-                        user1: id,
-                        user2: friendId,
-                        status: "request"
-                    });
+        this._find(req, q, function(r) {
+            if (r.status && r.result.length == 0) {
+                var Friend = new FriendModel({
+                    user1: id,
+                    user2: friendId,
+                    status: "request"
+                });
 
-                    Friend.save(function(err, Friend) {
-                        if (err) {
-                            return res.status(500).json({
-                                status: false,
-                                message: 'Error when creating new Friend',
-                                error: err
-                            });
-                        }
-                        return res.status(201).json({
-                            status: true,
-                            message: 'Success',
-                            result: Friend
+                Friend.save(function(err, Friend) {
+                    if (err) {
+                        return res.status(500).json({
+                            status: false,
+                            message: 'Error when creating new Friend',
+                            error: err
                         });
+                    }
+                    return res.status(201).json({
+                        status: true,
+                        message: 'Success',
+                        result: Friend
                     });
-                } else {
-                    return res.status(200).json({ status: s, result: { message: "" } });
-                }
+                });
             } else {
-                return res.status(200).json({ status: s, result: r });
+                return res.status(200).json(r);
             }
         }, id);
     },
 
     unFriend: function(req, res) {
         if (req.error) {
-            return res.status(403).json(req.error); }
+            return res.status(403).json(req.error);
+        }
 
         /* var id = req["me"]["__id"],
              q = { "$and": [{ "$or": [{ "user1": id }, { "user2": id }] }, { "status": "friend" }] };

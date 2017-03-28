@@ -28,44 +28,52 @@ module.exports = {
             }
         });
     },
-    locationSearch: function(req, res) {
+    search: function(req, res) {
         if (req.error) {
             return res.status(403).json(req.error);
         }
         var page = req.query.page ? req.query.page - 1 : 0,
             limit = req.query.limit ? req.query.limit : 5,
             skip = page * limit;
+        var searchString = req.query.searchString ? { '$search': req.query.searchString } : null;
         var select = "_id name photoURL email gender";
         var location = req.query.lat && req.query.long ? [req.query.long, req.query.lat] : req["me"].currentLocation.coordinates;
         req.query.minDis = req.query.minDis ? req.query.minDis : 10;
         req.query.maxDis = req.query.maxDis ? req.query.maxDis : 1000;
-        var searchString = req.query.searchString ?{'$search': req.query.searchString}:null;
-        var q = {"currentLocation": { "$near": { "$geometry": { "type": "Point", "coordinates":location }, "$minDistance": req.query.minDis, "$maxDistance": req.query.maxDis } } }
-        if(searchString){
+        var q = { "currentLocation": { "$near": { "$geometry": { "type": "Point", "coordinates": location }, "$minDistance": req.query.minDis, "$maxDistance": req.query.maxDis } } }
+        if (searchString) {
+            if(!req.query.lat && !req.query.long){
+              q = {};
+            }
             q['$text'] = searchString;
         }
-        UserModel.find(q).select(select).skip(Number(skip)).limit(Number(limit)).exec(function(err,nearUsers) {
-            if(err){
+        UserModel.find(q).select(select).skip(Number(skip)).limit(Number(limit)).exec(function(err, nearUsers) {
+            if (err) {
                 return res.status(500).json({
                     status: false,
                     message: 'Error when getting users.',
                     error: err
                 });
             }
-            return res.json({ status: true, result: nearUsers });
+            UserModel.count(q).exec(function(e, count) {
+                return res.json({ 'status': true, 'result': nearUsers, 'count': count });
+            });
         })
     },
     _list: function(req, res, ids) {
         var select = "_id name photoURL email gender";
-        UserModel.find({ "_id": ids }).select(select).limit(10).exec(function(err, suggestion) {
-            if (err) {
+        var q ={ "_id": ids };
+        UserModel.find(q).select(select).limit(10).exec(function(err, suggestion) {
+            if(err){
                 return res.status(500).json({
                     status: false,
                     message: 'Error when getting suggestion.',
                     error: err
                 });
             }
-            return res.json({ status: true, result: suggestion });
+            UserModel.count(q).exec(function(e, count) {
+                return res.json({ 'status': true, 'result': suggestion, 'count': count });
+            });
         });
     },
     show: function(req, res) {

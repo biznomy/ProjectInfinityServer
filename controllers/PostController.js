@@ -57,7 +57,9 @@ module.exports = {
                         error: err
                     });
                 }
-                return res.json({ status: true, result: Posts });
+                PostModel.count({ "created_by":by}).exec(function(e,count){
+                    return res.json({ 'status': true, 'result': Posts ,'count':count});
+                });
             });
     },
     show: function(req, res) {
