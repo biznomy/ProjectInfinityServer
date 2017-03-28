@@ -45,7 +45,7 @@ module.exports = {
             limit = req.query.limit ? req.query.limit : 5,
             skip = page * limit;
         PostModel.find({ "created_by":by})
-            .populate({ path: 'files', select: "_id name size url type" })
+            .populate({ path: 'files', select: "_id url type" })
             .populate({ path: 'created_by', select: "_id name photoURL" })
             .populate({
                 path: 'comments',select: "description user_id",model: "Comment",

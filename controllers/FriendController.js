@@ -7,8 +7,10 @@ module.exports = {
             limit = req.query.limit ? req.query.limit : 5,
             skip = page * limit;
         idd = "'" + idd + "'";
-        FriendModel.find(query).populate({ path: 'user1', select: "_id name photoURL" })
-            .populate({ path: 'user2', select: "_id name photoURL" }).skip(Number(skip)).limit(Number(limit)).exec(function(err, Friends) {
+        FriendModel.find(query).populate({ path: 'user1', select: "_id name photoURL" ,model: "User",
+                populate: {path: 'cover',select: "_id url",model: "File" }})
+            .populate({ path: 'user2', select: "_id name photoURL cover",model: "User",
+                populate: {path: 'cover',select: "_id url",model: "File" }}).skip(Number(skip)).limit(Number(limit)).exec(function(err, Friends) {
                 if (err) {
                     cb(false, Friends);
                 } else {
