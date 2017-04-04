@@ -9,17 +9,24 @@ module.exports = {
         if (req.error) {
             return res.status(403).json(req.error);
         }
-        var myId = req["me"]["__id"],
-            self = this;
-        FriendModel.find({ "user1": { "$ne": myId }, "user2": { "$ne": myId } }).select("user1 user2").limit(5).exec(function(err, data) {
+        var myId = req["me"]["__id"],self = this;
+        var q = { "$and": [{ "$or": [{ "user1": myId }, { "user2": myId }] }, { "status": "friend" }] };
+
+        FriendModel.find(q).select("user1 user2").exec(function(err, data) {
             if (!err) {
                 if (data.length > 0) {
-                    var ids = [];
-                    for (var i = 0; i < data.length; i++) {
-                        ids.push(data[i].user1);
-                        ids.push(data[i].user2);
-                    }
-                    self._list(req, res, { "$in": ids });
+                    var t1 = "'" + myId + "'";
+                    var frnds = data.map(function(f) {
+                        var t2 = "'" + f.user1 + "'";
+                        if (t1 == t2) {
+                            return f.user2;
+                        } else {
+                            return f.user1;
+                        }
+                    });
+                    frnds.push(myId);
+                    console.log(frnds);
+                    self._list(req, res, { "$nin": frnds });
                 } else {
                     self._list(req, res, { "$ne": myId });
                 }
