@@ -10,7 +10,7 @@ module.exports = {
             return res.status(403).json(req.error);
         }
         var myId = req["me"]["__id"],self = this;
-        var q = { "$and": [{ "$or": [{ "user1": myId }, { "user2": myId }] }, { "status": "friend" }] };
+        var q = { "$or": [{ "user1": myId }, { "user2": myId }] };
 
         FriendModel.find(q).select("user1 user2").exec(function(err, data) {
             if (!err) {
