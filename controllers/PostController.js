@@ -46,7 +46,7 @@ module.exports = {
             skip = page * limit;
         PostModel.find({ "created_by":by})
             .populate({ path: 'files', select: "_id url type" })
-            .populate({ path: 'created_by', select: "_id name photoURL" })
+            .populate({ path: 'created_by', select: "_id name photoURL email gender" })
             .populate({
                 path: 'comments',select: "description user_id",model: "Comment",
                 populate: {path: 'user_id',select: "_id name photoURL",model: "User"}
