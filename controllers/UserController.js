@@ -25,10 +25,9 @@ module.exports = {
                         }
                     });
                     frnds.push(myId);
-                    console.log(frnds.length);
-                    self._list(req, res, { "$nin": frnds });
+                    self._list(req, res, { "$nin": frnds },"suggestion");
                 } else {
-                    self._list(req, res, { "$ne": myId });
+                    self._list(req, res, { "$ne": myId },"suggestion");
                 }
             } else {
                 return res.json({ status: false, result: [] });
@@ -67,7 +66,7 @@ module.exports = {
             });
         })
     },
-    _list: function(req, res, ids) {
+    _list: function(req, res, ids,typ) {
          var page = req.query.page ? req.query.page - 1 : 0,
             limit = req.query.limit ? req.query.limit : 10,
             skip = page * limit;
@@ -82,7 +81,7 @@ module.exports = {
                 });
             }
             UserModel.count(q).exec(function(e, count) {
-                return res.json({ 'status': true, 'result': suggestion, 'count': count });
+                return res.json({ 'status': true, 'result': suggestion, 'count': count ,type:typ});
             });
         });
     },

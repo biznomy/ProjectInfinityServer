@@ -2,7 +2,7 @@ var FriendModel = require('../models/FriendModel.js');
 
 module.exports = {
 
-    _find: function(req, query, cb, idd) {
+    _find: function(req, query, cb, idd,type) {
         var page = req.query.page ? req.query.page - 1 : 0,
             limit = req.query.limit ? req.query.limit : 10,
             skip = page * limit;
@@ -32,7 +32,7 @@ module.exports = {
                     }
                 });
                 FriendModel.count(query).exec(function(e, count) {
-                    cb({ 'status': true, 'result': frnds, 'count': count });
+                    cb({ 'status': true, 'result': frnds, 'count': count ,'type':type});
                 });
             }
 
@@ -62,7 +62,7 @@ module.exports = {
 
         this._find(req, q, function(r) {
             return res.status(200).json(r);
-        }, id);
+        }, id,"friend");
 
     },
 
@@ -81,11 +81,13 @@ module.exports = {
             return res.status(403).json(req.error);
         }
         var id = req["me"]["__id"],
-            q = { "status": "request" };
+            q = { "status": "request"};
         q[type] = id;
+        var typ = "requestOut"
+        if (type == "user2"){ typ = "requestIn" }
         this._find(req, q, function(r) {
             return res.status(200).json(r);
-        }, id);
+        },id,typ);
     },
 
     blockOrAccept: function(req, res, type) {
