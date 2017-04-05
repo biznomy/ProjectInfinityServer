@@ -6,7 +6,7 @@ router.get('/:friendId/request', function (req, res) {
     FriendController.senReq(req, res);
 });
 
-router.get('/:friendId/unfriend/:id', function (req, res) {
+router.get('/:friendId/unfriend', function (req, res) {
     FriendController.unFriend(req,res,"unfriend");
 });
 

@@ -42,7 +42,7 @@ module.exports = {
     },
     _list: function(req, res,by) {
         var page = req.query.page ? req.query.page - 1 : 0,
-            limit = req.query.limit ? req.query.limit : 5,
+            limit = req.query.limit ? req.query.limit : 10,
             skip = page * limit;
         PostModel.find({ "created_by":by})
             .populate({ path: 'files', select: "_id url type" })

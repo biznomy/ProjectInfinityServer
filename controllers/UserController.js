@@ -40,7 +40,7 @@ module.exports = {
             return res.status(403).json(req.error);
         }
         var page = req.query.page ? req.query.page - 1 : 0,
-            limit = req.query.limit ? req.query.limit : 5,
+            limit = req.query.limit ? req.query.limit : 10,
             skip = page * limit;
         var searchString = req.query.searchString ? { '$search': req.query.searchString } : null;
         var select = "_id name photoURL email gender";
@@ -69,7 +69,7 @@ module.exports = {
     },
     _list: function(req, res, ids) {
          var page = req.query.page ? req.query.page - 1 : 0,
-            limit = req.query.limit ? req.query.limit : 5,
+            limit = req.query.limit ? req.query.limit : 10,
             skip = page * limit;
         var select = "_id name photoURL email gender";
         var q ={ "_id": ids };
