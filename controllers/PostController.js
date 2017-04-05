@@ -14,19 +14,21 @@ module.exports = {
         if (id == "me") {
             id = req["me"]["__id"];
         }
-        this._list(req,res,id);
+        this._list(req, res, id);
     },
 
     wall: function(req, res) {
         if (req.error) {
             return res.status(403).json(req.error);
         }
-        var myId = req["me"]["__id"],self =this;
+        var myId = req["me"]["__id"],
+            self = this;
         FriendModel.find({ "status": "friend", "$or": [{ "user1": myId }, { "user2": myId }] }).select("user1 user2").exec(function(err, data) {
             if (data) {
                 var ids = [];
                 for (var i = 0; i < data.length; i++) {
-                    var u1 = '"' + myId + '"', u2 = '"' + myId + '"';
+                    var u1 = '"' + myId + '"',
+                        u2 = '"' + myId + '"';
                     if (u1 === u2) {
                         ids.push(data[i].user2);
                     } else {
@@ -34,22 +36,32 @@ module.exports = {
                     }
                 }
                 ids.push(myId);
-                self._list(req, res,{ "$in": ids });
+                self._list(req, res, { "$in": ids });
             } else {
                 return res.json({ status: true, result: [] });
             }
         });
     },
-    _list: function(req, res,by) {
+    search: function(req, res) {
+        if (req.error) {
+            return res.status(403).json(req.error);
+        }
         var page = req.query.page ? req.query.page - 1 : 0,
             limit = req.query.limit ? req.query.limit : 10,
-            skip = page * limit;
-        PostModel.find({ "created_by":by})
+            skip = page * limit,
+            q = {};
+        var searchString = req.query.searchString ? { '$search': req.query.searchString } : null;
+        if (searchString) {
+            q['$text'] = searchString;
+        }
+        PostModel.find(q)
             .populate({ path: 'files', select: "_id url type" })
             .populate({ path: 'created_by', select: "_id name photoURL email gender" })
             .populate({
-                path: 'comments',select: "description user_id",model: "Comment",
-                populate: {path: 'user_id',select: "_id name photoURL",model: "User"}
+                path: 'comments',
+                select: "description user_id",
+                model: "Comment",
+                populate: { path: 'user_id', select: "_id name photoURL", model: "User" }
             }).sort({ "created_at": -1 }).skip(Number(skip)).limit(Number(limit)).exec(function(err, Posts) {
                 if (err) {
                     return res.status(500).json({
@@ -57,8 +69,32 @@ module.exports = {
                         error: err
                     });
                 }
-                PostModel.count({ "created_by":by}).exec(function(e,count){
-                    return res.json({ 'status': true, 'result': Posts ,'count':count});
+                PostModel.count(q).exec(function(e, count) {
+                    return res.json({ 'status': true, 'result': Posts, 'count': count });
+                });
+            });
+    },
+    _list: function(req, res, by) {
+        var page = req.query.page ? req.query.page - 1 : 0,
+            limit = req.query.limit ? req.query.limit : 10,
+            skip = page * limit;
+        PostModel.find({ "created_by": by })
+            .populate({ path: 'files', select: "_id url type" })
+            .populate({ path: 'created_by', select: "_id name photoURL email gender" })
+            .populate({
+                path: 'comments',
+                select: "description user_id",
+                model: "Comment",
+                populate: { path: 'user_id', select: "_id name photoURL", model: "User" }
+            }).sort({ "created_at": -1 }).skip(Number(skip)).limit(Number(limit)).exec(function(err, Posts) {
+                if (err) {
+                    return res.status(500).json({
+                        message: 'Error when getting Post.',
+                        error: err
+                    });
+                }
+                PostModel.count({ "created_by": by }).exec(function(e, count) {
+                    return res.json({ 'status': true, 'result': Posts, 'count': count });
                 });
             });
     },
@@ -186,15 +222,15 @@ module.exports = {
         }
         var id = req.params.id;
 
-        PostModel.remove({"_id": id ,"created_by":req["me"]["__id"]}, function (err) {
+        PostModel.remove({ "_id": id, "created_by": req["me"]["__id"] }, function(err) {
             if (err) {
                 return res.status(500).json({
-                    status:false,
+                    status: false,
                     message: 'Error when deleting the Post.',
                     error: err
                 });
             }
-            return res.status(200).json({status:true,message:"Delete Post Successfully"});
+            return res.status(200).json({ status: true, message: "Delete Post Successfully" });
         });
     }
 };

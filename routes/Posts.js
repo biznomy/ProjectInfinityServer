@@ -11,6 +11,10 @@ router.get('/wall', function(req, res) {
     PostController.wall(req, res);
 });
 
+router.get('/search', function(req, res) {
+    PostController.search(req, res);
+});
+
 /*router.get('/search', function(req, res) {
     PostController.search(req, res);
 });*/
