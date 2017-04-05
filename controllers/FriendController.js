@@ -148,17 +148,6 @@ module.exports = {
             return res.status(403).json(req.error);
         }
 
-        /* var id = req["me"]["__id"],
-             q = { "$and": [{ "$or": [{ "user1": id }, { "user2": id }] }, { "status": "friend" }] };
-
-         this._find(q, function(s, r) {
-             if (s) {
-                 return res.status(200).json({ status: s, result: r });
-             } else {
-                 return res.status(200).json({ status: s, result: r });
-             }
-         });*/
-
         var id = req.params.id;
         FriendModel.findByIdAndRemove(id, function(err, Friend) {
             if (err) {

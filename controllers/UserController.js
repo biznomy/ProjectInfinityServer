@@ -25,7 +25,7 @@ module.exports = {
                         }
                     });
                     frnds.push(myId);
-                    console.log(frnds);
+                    console.log(frnds.length);
                     self._list(req, res, { "$nin": frnds });
                 } else {
                     self._list(req, res, { "$ne": myId });
@@ -68,9 +68,12 @@ module.exports = {
         })
     },
     _list: function(req, res, ids) {
+         var page = req.query.page ? req.query.page - 1 : 0,
+            limit = req.query.limit ? req.query.limit : 5,
+            skip = page * limit;
         var select = "_id name photoURL email gender";
         var q ={ "_id": ids };
-        UserModel.find(q).select(select).limit(10).exec(function(err, suggestion) {
+        UserModel.find(q).select(select).skip(Number(skip)).limit(Number(limit)).exec(function(err, suggestion) {
             if(err){
                 return res.status(500).json({
                     status: false,
