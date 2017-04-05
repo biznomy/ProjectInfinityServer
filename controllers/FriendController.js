@@ -18,7 +18,7 @@ module.exports = {
             select: select,
             model: "User",
             populate: { path: 'cover', select: "_id url", model: "File" }
-        }).skip(Number(skip)).limit(Number(limit)).exec(function(err, Friends) {
+        }).skip(Number(skip)).limit(Number(limit)).sort({ "_id": -1 }).exec(function(err, Friends) {
             if (err) {
                 cb(false, Friends);
             } else {
