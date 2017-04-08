@@ -103,7 +103,7 @@ module.exports = {
             return res.status(403).json(req.error);
         }
         var id = req.params.id;
-        PostModel.findOne({ _id: id }, function(err, Post) {
+        PostModel.findOne({ _id: id }).populate({ path: 'files', select: "_id url type" }).exec(function(err, Post) {
             if (err) {
                 return res.status(500).json({
                     message: 'Error when getting Post.',
