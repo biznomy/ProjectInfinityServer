@@ -2,7 +2,7 @@ var FriendModel = require('../models/FriendModel.js');
 
 module.exports = {
 
-    _find: function(req, query, cb, idd,type) {
+    _find: function(req, query, cb, idd, type) {
         var page = req.query.page ? req.query.page - 1 : 0,
             limit = req.query.limit ? req.query.limit : 10,
             skip = page * limit;
@@ -32,7 +32,7 @@ module.exports = {
                     }
                 });
                 FriendModel.count(query).exec(function(e, count) {
-                    cb({ 'status': true, 'result': frnds, 'count': count ,'type':type});
+                    cb({ 'status': true, 'result': frnds, 'count': count, 'type': type });
                 });
             }
 
@@ -62,7 +62,7 @@ module.exports = {
 
         this._find(req, q, function(r) {
             return res.status(200).json(r);
-        }, id,"friend");
+        }, id, "friend");
 
     },
 
@@ -81,13 +81,13 @@ module.exports = {
             return res.status(403).json(req.error);
         }
         var id = req["me"]["__id"],
-            q = { "status": "request"};
+            q = { "status": "request" };
         q[type] = id;
         var typ = "requestOut"
-        if (type == "user2"){ typ = "requestIn" }
+        if (type == "user2") { typ = "requestIn" }
         this._find(req, q, function(r) {
             return res.status(200).json(r);
-        },id,typ);
+        }, id, typ);
     },
 
     blockOrAccept: function(req, res, type) {
@@ -169,7 +169,7 @@ module.exports = {
         }
         var id = req["me"]["__id"],
             frienId = req.params.friendId,
-            q = { "$and": [{ "status": "friend" }, { "$or": [{ "user2": id, "user1": frienId }, { "user2": frienId, "user1": id }] }] };
+            q = { "$or": [{ "user2": id, "user1": frienId }, { "user2": frienId, "user1": id }] };
         FriendModel.remove(q, function(err) {
             if (err) {
                 return res.status(500).json({
