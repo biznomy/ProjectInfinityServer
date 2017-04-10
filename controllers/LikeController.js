@@ -16,7 +16,10 @@ module.exports = {
                     error: err
                 });
             }
-            return res.status(200).json({ status: true, result: Likes });
+            var lks = Likes.map(function(f) {
+                     return f.user_id;
+            });
+            return res.status(200).json({ status: true, result: lks });
         });
     },
 

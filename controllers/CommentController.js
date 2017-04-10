@@ -18,7 +18,13 @@ module.exports = {
                     error: err
                 });
             }
-            return res.status(200).json({ status: true, result: Comments });
+            var cmts = Comments.map(function(f) {
+                f["name"] = f.user_id.name;
+                f["photoURL"] = f.user_id.photoURL;
+                f["commenter"] = f.user_id._id;
+                return f;
+            });
+            return res.status(200).json({ status: true, result: cmts });
         });
     },
 

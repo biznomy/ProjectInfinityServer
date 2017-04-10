@@ -169,6 +169,7 @@ module.exports = {
             return res.status(204).json();
         });
     },
+    
     getByUidFromFirebase: function(req, res) {
         if (req.error) {
             res.status(403).json(req.error);
