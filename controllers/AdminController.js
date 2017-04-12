@@ -134,7 +134,10 @@ module.exports = {
                     error: err
                 });
             }
-        PostModel.find({"created_by" : req.params.id },function(err, data) {
+        PostModel.find({"created_by" : req.params.id })
+        .limit(10)
+        .populate(['created_by', 'comments'])        
+        .exec(function(err, data) {
             if (err) {
                 return res.status(500).json({
                     message: 'Error when getting Admin.',
@@ -142,7 +145,7 @@ module.exports = {
                 });
             }
             return res.json({"data" : data ,"count" : count});
-        }).limit(10)
+        });
            
         })
     },
