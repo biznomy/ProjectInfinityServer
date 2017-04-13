@@ -31,6 +31,7 @@ router.get('/comment/count/:id', AdminController.commentSearch);
 
 router.get('/comment', AdminController.comment);
 
+router.get('/dashboard', AdminController.dashboard);
 /*
  * PUT
  */

@@ -160,6 +160,45 @@ module.exports = {
             return res.json(data);
         }).limit(20);
     },
+
+    dashboard : function(req, res){
+         AdminModel.count(function(err, users) {
+            if (err) {
+                return res.status(500).json({
+                    message: 'Error when getting Admin.',
+                    error: err
+                });
+            }
+            PostModel.count(function(err, posts) {
+            if (err) {
+                return res.status(500).json({
+                    message: 'Error when getting Admin.',
+                    error: err
+                });
+            }
+            CommentModel.count(function(err, comments) {
+            if (err) {
+                return res.status(500).json({
+                    message: 'Error when getting Admin.',
+                    error: err
+                });
+            }
+             LikeModel.count(function(err, likes) {
+            if (err) {
+                return res.status(500).json({
+                    message: 'Error when getting Admin.',
+                    error: err
+                });
+            }
+            return res.json({"totalUsersCount" : users, "totalPostsCount" : posts , "totalCommentsCount" : comments, "totalLikesCount" : likes});
+        })
+
+        })
+
+        })
+
+      })
+    },
     /**
      * AdminController.show()
      */
