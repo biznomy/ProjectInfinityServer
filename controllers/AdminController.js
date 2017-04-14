@@ -199,6 +199,80 @@ module.exports = {
 
       })
     },
+
+    userInfo : function(req, res){
+      var _ids = req.params.id;
+      var comms;
+      var likes;
+      var posts;
+       CommentModel.count({user_id : _ids },function(err, count) {
+            if (err) {
+                return res.status(500).json({
+                    message: 'Error when getting Admin.',
+                    error: err
+                });
+            }
+            console.log("postCount"+ count)
+        CommentModel.find({user_id : _ids },function(err, data) {
+            if (err) {
+                return res.status(500).json({
+                    message: 'Error when getting Admin.',
+                    error: err
+                });
+            }
+
+         comm = {"data" : data ,"count" : count}
+        PostModel.count({"created_by" : _ids },function(err, countP) {
+            if (err) {
+                return res.status(500).json({
+                    message: 'Error when getting Admin.',
+                    error: err
+                });
+            }
+        PostModel.find({"created_by" : _ids })
+        .limit(10) 
+        .populate(['files'])        
+        .exec(function(err, dataP) {
+            if (err) {
+                return res.status(500).json({
+                    message: 'Error when getting Admin.',
+                    error: err
+                });
+            }
+            posts = {"data" : dataP ,"count" : countP} 
+            
+        LikeModel.count({user_id : req.params.id },function(err, countL) {
+            if (err) {
+                return res.status(500).json({
+                    message: 'Error when getting Admin.',
+                    error: err
+                });
+            }
+            return res.json({"posts" : posts , "comments" : comm , "likes" : {"data" : "" , "count" : countL}});
+
+        })
+        });
+           
+        })    
+
+        }).limit(5)
+           
+        })
+
+        
+       
+    },
+    userObj : function(req ,res){
+         AdminModel.findOne({ _id: req.params.id },function(err, Admins) {
+            if (err) {
+                return res.status(500).json({
+                    message: 'Error when getting Admin.',
+                    error: err
+                });
+            }
+            return res.json(Admins);
+        });
+    },
     /**
      * AdminController.show()
      */

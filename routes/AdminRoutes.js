@@ -31,7 +31,13 @@ router.get('/comment/count/:id', AdminController.commentSearch);
 
 router.get('/comment', AdminController.comment);
 
+
+// bulk
 router.get('/dashboard', AdminController.dashboard);
+
+router.get('/userinfo/:id', AdminController.userInfo);
+
+router.get('/person/:id', AdminController.userObj);
 /*
  * PUT
  */
