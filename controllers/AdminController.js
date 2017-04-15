@@ -157,8 +157,17 @@ module.exports = {
                     error: err
                 });
             }
-            return res.json(data);
-        }).limit(20);
+             PostModel.count(function(err, count) {
+            if (err) {
+                return res.status(500).json({
+                    message: 'Error when getting Admin.',
+                    error: err
+                });
+            }
+            return res.json({"data":data , "count" : count});
+        })
+            
+        }).limit(20).populate(['files']) ;
     },
 
     dashboard : function(req, res){
@@ -362,7 +371,9 @@ module.exports = {
         var q = req.query;
         var mycount = 0;
         var query = { $text: { $search: q.text } }
-        AdminModel.find(query, function(err, data) {
+        console.log(query)
+        if(q.model.indexOf("use") > -1 ){
+            AdminModel.find(query, function(err, data) {
             if (err) {
                 return res.status(400).json(err);
             }
@@ -370,7 +381,21 @@ module.exports = {
                 mycount = count;
                 return res.status(200).json({data: data, count: mycount });
             });
-        })
+        }).limit(10)  
+        }else if(q.model.indexOf("pos") > -1){
+        PostModel.find(query, function(err, data) {
+            if (err) {
+                return res.status(400).json(err);
+            }
+        PostModel.count(query, function(err, count) {
+                mycount = count;
+                return res.status(200).json({data: data, count: mycount });
+            });
+        }).limit(10)  
+        }else{
+            return res.status(400).json({"message" : "No model defined"});
+        }
+       
 
     }
 };
