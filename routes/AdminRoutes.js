@@ -45,6 +45,11 @@ router.put('/:id', AdminController.update);
 /*
  * DELETE
  */
+
+ //Post 
+
+router.put('/user/detail/:id', AdminController.updateUserDetail);
+
 router.delete('/:id', AdminController.remove);
 
 router.get('/search/user' ,AdminController.searchUser);
