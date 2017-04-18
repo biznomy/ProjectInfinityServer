@@ -2,7 +2,7 @@ var PostModel = require('../models/PostModel.js');
 var FriendModel = require('../models/FriendModel.js');
 var FileUploader = require("../util/FileUploader");
 var FileController = require("./FileController");
-
+var LikeModel = require('../models/LikeModel.js');
 
 module.exports = {
 
@@ -93,8 +93,21 @@ module.exports = {
                         error: err
                     });
                 }
-                PostModel.count({ "created_by": by }).exec(function(e, count) {
-                    return res.json({ 'status': true, 'result': Posts, 'count': count });
+                var me = req["me"]["__id"];
+                var post_ids = Posts.map(function(p){return p._id});
+                LikeModel.find({ "user_id": me, "post_id":{"$in":post_ids}}).select("post_id").exec(function(err,lks){
+                    Posts = JSON.parse(JSON.stringify(Posts));
+                    var PostsWithLikes = Posts.map(function(r){
+                        r["like"] = false;
+                        lks.filter(function(el){
+                            r["like"] = el.post_id == r._id;
+                        });
+                        return r;
+                    });
+
+                    PostModel.count({ "created_by": by }).exec(function(e, count) {
+                        return res.json({ 'status': true, 'result': PostsWithLikes, 'count': count });
+                    });
                 });
             });
     },

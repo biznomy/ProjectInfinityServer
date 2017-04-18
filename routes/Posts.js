@@ -15,10 +15,6 @@ router.get('/search', function(req, res) {
     PostController.search(req, res);
 });
 
-/*router.get('/search', function(req, res) {
-    PostController.search(req, res);
-});*/
-
 router.get('/:id', function(req, res) { PostController.show(req, res); });
 
 router.post('/', function(req, res) { PostController.create(req, res); });

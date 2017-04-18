@@ -96,10 +96,11 @@ module.exports = {
         }
 
         var self = this,
-            id = req.params.id,
-            frinedID = req.params.frinedID;
+         id = req["me"]["__id"],
+            frienId = req.params.friendId,
+            q = { "$or": [{ "user2": id, "user1": frienId }, { "user2": frienId, "user1": id }] };
 
-        self._findById(id, function(s, r) {
+        self.findOne(q, function(s,r) {
             if (s) {
                 var id = req["me"]["__id"];
                 if (r.user2.toString() == id.toString()) {
@@ -119,7 +120,7 @@ module.exports = {
         if (req.error) {
             return res.status(403).json(req.error);
         }
-
+        
         var id = req["me"]["__id"],
             self = this,
             friendId = req.params.friendId;

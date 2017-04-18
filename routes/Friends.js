@@ -10,11 +10,11 @@ router.get('/:friendId/unfriend', function (req, res) {
     FriendController.unFriend(req,res,"unfriend");
 });
 
-router.get('/:friendId/block/:id', function (req, res) {
+router.get('/:friendId/block', function (req, res) {
     FriendController.blockOrAccept(req,res,"block");
 });
 
-router.get('/:friendId/accept/:id', function (req, res) {
+router.get('/:friendId/accept', function (req, res) {
     FriendController.blockOrAccept(req,res,"friend");
 });
 
