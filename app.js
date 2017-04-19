@@ -65,10 +65,13 @@ app.use('/posts', Posts);
 app.use('/like', Likes);
 app.use('/comment', Comments);
 app.use('/friend', Friends);
-app.use("/uploads/:imagename", function(req, res, next){
-    //console.log(req.params.imagename);
-    var img = fs.readFileSync('./uploads/'+req.params.imagename);
-    res.writeHead(200, {'Content-Type': 'image/*' });
+
+app.use("/store/:type/:name", function(req, res, next){
+    var extn = req.params.name;
+    extn = extn.split(".");
+    extn = extn[extn.length - 1];
+    var img = fs.readFileSync('./store/'+req.params.type +"/"+req.params.name);
+    res.writeHead(200, {'Content-Type': 'image/'+ extn});
     res.end(img, 'binary');    
 });
 

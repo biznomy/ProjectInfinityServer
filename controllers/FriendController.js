@@ -7,7 +7,7 @@ module.exports = {
             limit = req.query.limit ? req.query.limit : 10,
             skip = page * limit;
         idd = "'" + idd + "'";
-        var select = "_id name photoURL email gender";
+        var select = "_id name photoURL email gender cover";
         FriendModel.find(query).populate({
             path: 'user1',
             select: select,
