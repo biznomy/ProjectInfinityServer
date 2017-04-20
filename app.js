@@ -70,12 +70,8 @@ app.use("/store/:type/:name", function(req, res, next){
     var extn = req.params.name;
     extn = extn.split(".");
     extn = extn[extn.length - 1];
-    var img = fs.readFileSync('./store/'+req.params.type +"/"+req.params.name);
-    res.writeHead(200, {'Content-Type': 'image/'+ extn});
-    res.end(img, 'binary');    
+    res.sendFile(path.resolve('./store/'+req.params.type +"/"+req.params.name));
 });
-
-
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

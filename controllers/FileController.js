@@ -1,4 +1,5 @@
 var FileModel = require('../models/FileModel.js');
+var CONSTANT = require("../util/Constant.js");
 
 module.exports = {
 
@@ -32,7 +33,7 @@ module.exports = {
         });
     },
     _create :function(data,cb){
-        data.url = "http://192.168.1.4:3000/"+data.url;        
+        data.url = CONSTANT.SERVER_ADDRESS+data.url;        
       var File = new FileModel(data);
         File.save(function (err, File) {
             if (err) {

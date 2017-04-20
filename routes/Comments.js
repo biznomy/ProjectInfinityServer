@@ -6,6 +6,8 @@ router.get('/:commentId/list', function (req, res){CommentController.list(req, r
 
 router.post('/save', function (req, res) {CommentController.create(req, res);});
 
+router.post('/save/base64', function (req, res) {CommentController.createWithBase64(req, res);});
+
 router.put('/:id', function (req, res) {CommentController.update(req, res);});
 
 router.get('/:id/delete',function (req, res) {CommentController.remove(req, res);});

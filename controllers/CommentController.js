@@ -111,6 +111,36 @@ module.exports = {
             }
         });
     },
+    createWithBase64:function(req,res){
+       if (req.error) {
+            return res.status(403).json(req.error);
+        }
+        var self = this;
+        FileUploader.saveBase64(req.body.base64,"comments",function(status,name,size) {
+            if (status) {
+                var data = {
+                    name: name,
+                    type: "comments",
+                    size: size,
+                    url: "store/comments/"+name,
+                    created_by: req["me"]["__id"]
+                };
+                FileController._create(data, function(s, r) {
+                    if (s) {
+                        req.body.files = r._id;
+                        self._create(req, res);
+                    } else {
+                        return res.status(500).json({
+                            message: 'Error when creating comment',
+                            error: err
+                        });
+                    }
+                });
+            } else {
+                self._create(req, res);
+            }
+        });
+    },
 
     create: function(req, res) {
         var self = this;
