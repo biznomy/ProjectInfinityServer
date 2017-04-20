@@ -15,7 +15,7 @@ var Helper = {
     updateCovers:function(){
         var skip = 0,covers = FILES.find({type:"cover"}).skip(skip);
         while (covers.hasNext()){
-            print( skip +"  /  "+ covers.length());
+            print( skip );
             var cover = covers.next();
             var cvrImgUrl = GoogleImagesLink.find().skip(Helper.getRandomInt(0,GoogleImagesLink.count() - 1 )).limit(1);
             cover["url"] = cvrImgUrl[0]["url"]
