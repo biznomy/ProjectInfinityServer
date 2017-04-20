@@ -13,7 +13,7 @@ var Helper = {
         return r;
     },
     updateCovers:function(){
-        var skip = 0,covers = FILES.find({type:"cover"}).skip(skip).limit(100000);
+        var skip = 0,covers = FILES.find({type:"cover"}).skip(skip);
         while (covers.hasNext()){
             print( skip +"  /  "+ covers.length());
             var cover = covers.next();
