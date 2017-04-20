@@ -16,10 +16,10 @@ var Helper = {
         var skip = 0,covers = FILES.find({type:"cover"}).skip(skip);
         while (covers.hasNext()){
             print( skip +"  /  "+ covers.length());
-            var cover = covers.next();
+            /*var cover = covers.next();
             var cvrImgUrl = GoogleImagesLink.find().skip(Helper.getRandomInt(0,GoogleImagesLink.count() - 1 )).limit(1);
             cover["url"] = cvrImgUrl[0]["url"]
-            FILES.update({ "_id": cover._id }, cover); 
+            FILES.update({ "_id": cover._id }, cover); */
             skip++;
         }
     }

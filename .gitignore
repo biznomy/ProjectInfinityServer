@@ -28,6 +28,7 @@ build/Release
 
 # Dependency directories
 uploads
+store
 node_modules
 jspm_packages
 
