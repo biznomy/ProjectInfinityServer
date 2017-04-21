@@ -20,6 +20,7 @@ var FileUploader = {
     },
     saveBase64: function(base64Data,path,cb) {
         if (!base64Data) {
+            console.log("base64Data not found");
             cb(false);
             return '';
         }
@@ -31,6 +32,7 @@ var FileUploader = {
         
         fs.writeFile("store/"+path +"/"+ imgType, new Buffer(base64Data, 'base64'), function(err) {
             if(err) {
+                console.log("error during save " + err);
                 cb(false,err);
             } else {
               cb(true,imgType,Buffer.byteLength(base64Data, 'utf8'));
