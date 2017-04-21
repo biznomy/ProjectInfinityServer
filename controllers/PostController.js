@@ -195,11 +195,7 @@ module.exports = {
         }
         var self = this;
         FileUploader.saveBase64(req.body.base64,"posts", function(status,name,size) {
-            return res.status(500).json({
-                            message: status,
-                            name: name
-                        });
-            /*if (status) {
+            if (status) {
                 var data = {
                     name: name,
                     type: "posts",
@@ -220,7 +216,7 @@ module.exports = {
                 });
             } else {
                 self._create(req, res);
-            }*/
+            }
         });
     },
     update: function(req, res) {
