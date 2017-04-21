@@ -1,7 +1,10 @@
 var UserModel = require('../models/UserModel.js'),
     FIREBASE = require('../firebase'),
     FriendModel = require('../models/FriendModel.js'),
-    UserModel = require("../models/UserModel");
+    UserModel = require("../models/UserModel"),
+    FileUploader = require("../util/FileUploader");
+var CONSTANT = require("../util/Constant.js");
+var FileController = require("./FileController");
 
 module.exports = {
 
@@ -123,7 +126,7 @@ module.exports = {
         });
     },
 
-    _update: function(req, res, User) {
+    _update: function(req, res, User,cb) {
         User.dob = req.body.dob ? req.body.dob : User.dob;
         User.name = req.body.name ? req.body.name : User.name;
         User.bio = req.body.bio ? req.body.bio : User.bio;
@@ -136,8 +139,8 @@ module.exports = {
         User.state = req.body.state ? req.body.state : User.state;
         User.country = req.body.country ? req.body.country : User.country;
         User.pincode = req.body.pincode ? req.body.pincode : User.pincode;
-        User.cover = req.body.cover ? req.body.cover : User.cover;
         User.gender = req.body.gender ? req.body.gender : User.gender;
+        User.cover = req.body.cover ? req.body.cover : User.cover;
         User.hobbies = req.body.hobbies ? req.body.hobbies : User.hobbies;
         User.currentLocation = req.body.currentLocation ? req.body.currentLocation : User.currentLocation;
         User.regid = req.body.regid || req.body.regid == "" ? req.body.regid : User.regid;
@@ -149,8 +152,11 @@ module.exports = {
                     error: err
                 });
             }
-
-            return res.json(User);
+            if(cb){
+                cb(User);
+            }else{
+              return res.status(200).json({status:true,result:User});
+            }
         });
     },
 
@@ -208,5 +214,81 @@ module.exports = {
                 self.create(req, res);
             }
         }, req.body["uid"], req.body["email"]);
+    },
+    updateProfilePic: function(req,res){
+        var self = this;
+        if (req.error) {
+            return res.status(403).json(req.error);
+        }
+        var self = this;
+        FileUploader.saveBase64(req.body.base64,"profile", function(status,name,size) {
+            if(status) {
+                var newUrl = CONSTANT.SERVER_ADDRESS+"store/profile/"+name;
+                var data = {
+                    photoURL: newUrl,
+                    uid:req["me"]["uid"]
+                };
+                FIREBASE.updateUser(data,function(s,r) {
+                    if(s){
+                        req.body["photoURL"] = newUrl;
+                        FIREBASE.getByUidFromLocal(req, function(rs){
+                            self._update(req, res, rs.result,function(){
+                                return res.status(200).json({status:true,result:{photoURL:newUrl}});
+                            });
+                        }, r["uid"], r["email"]);
+                    } else {
+                        return res.status(500).json({
+                            result: r,
+                            status: s
+                        });
+                    }
+                });
+            } else {
+                return res.status(500).json({
+                    result: status,
+                    status: name
+                });
+            }
+        });
+    },
+    updateCoverPic: function(req,res){
+        var self = this;
+        if (req.error) {
+            return res.status(403).json(req.error);
+        }
+        var self = this;
+        FileUploader.saveBase64(req.body.base64,"covers", function(status,name,size) {
+            if (status) {
+                var newUrl = CONSTANT.SERVER_ADDRESS+"store/covers/"+name;
+                var data = {
+                    name: name,
+                    type: "covers",
+                    size: size,
+                    url: "store/covers/"+name,
+                    created_by: req["me"]["__id"]
+                };
+                FileController._create(data, function(s, r) {
+                    if (s) {
+                        req.body["cover"] = r._id;
+                        FIREBASE.getByUidFromLocal(req, function(rs){
+                            self._update(req, res, rs.result,function(){
+                                return res.status(200).json({status:true,result:{cover:newUrl}});
+                            });
+                        }, req["me"]["uid"], req["me"]["email"]);
+                    }else {
+                        return res.status(500).json({
+                            message: 'Error when save cover',
+                            status: false
+                        });
+                    }
+                });
+            }else{
+                return res.status(500).json({
+                    message: 'Error when save cover',
+                    status: status,
+                    result:name
+                });
+            }
+        });
     }
 };

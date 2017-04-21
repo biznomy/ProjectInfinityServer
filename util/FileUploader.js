@@ -27,7 +27,7 @@ var FileUploader = {
         imgType = imgType[0].split("/");
         imgType = imgType[imgType.length - 1];
         imgType = Date.now() + "." + imgType;
-        base64Data = base64Data.replace(/^data:image\/(png|gif|jpeg|svg);base64,/, '');
+        base64Data = base64Data.replace(/^data:image\/(png|gif|jpeg|svg|webp);base64,/, '');
         
         fs.writeFile("store/"+path +"/"+ imgType, new Buffer(base64Data, 'base64'), function(err) {
             if(err) {

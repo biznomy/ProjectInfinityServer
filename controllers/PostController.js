@@ -100,7 +100,9 @@ module.exports = {
                     var PostsWithLikes = Posts.map(function(r){
                         r["like"] = false;
                         lks.filter(function(el){
-                            r["like"] = el.post_id == r._id;
+                            if(el.post_id == r._id){
+                              r["like"] = true;
+                            }
                         });
                         return r;
                     });
@@ -190,7 +192,7 @@ module.exports = {
         });
     },
     createWithBase64:function(req, res){
-       if (req.error) {
+        if (req.error) {
             return res.status(403).json(req.error);
         }
         var self = this;
@@ -210,7 +212,8 @@ module.exports = {
                     } else {
                         return res.status(500).json({
                             message: 'Error when creating Post',
-                            error: err
+                            error: err,
+                            status: false
                         });
                     }
                 });

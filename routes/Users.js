@@ -27,4 +27,12 @@ router.post('/push', function(req, res) {
     UserController.sendPushNotification(req, res);
 });
 
+router.post('/image/profile', function(req, res) {
+    UserController.updateProfilePic(req, res);
+});
+
+router.post('/image/cover', function(req, res) {
+    UserController.updateCoverPic(req, res);
+});
+
 module.exports = router;

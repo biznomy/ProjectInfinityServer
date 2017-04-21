@@ -82,7 +82,7 @@ var FIREBASE = {
             cb({ status: false, result: error });
         });
     },
-    createNewUser(d, cb) {
+    createNewUser:function(d, cb) {
         admin.auth().createUser({
             email: d.email,
             emailVerified: false,
@@ -94,6 +94,15 @@ var FIREBASE = {
             cb({ status: true, result: userRecord.providerData });
         }).catch(function(error) {
             cb({ status: false, result: error });
+        });
+    },
+    updateUser:function(user,cb){
+        admin.auth().updateUser(user.uid, {
+          photoURL: user.photoURL
+        }).then(function(userRecord) {
+           cb(true,userRecord.toJSON())
+        }).catch(function(error) {
+           cb(false,error)
         });
     }
 };
