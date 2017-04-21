@@ -62,7 +62,7 @@ app.use(function(req, res, next) {
 
 
 app.use('/user', Users);
-app.use('/posts', Posts);
+app.use('/post', Posts);
 app.use('/like', Likes);
 app.use('/comment', Comments);
 app.use('/friend', Friends);
