@@ -103,9 +103,9 @@ module.exports = {
         FriendModel.find(q, function(err,result) {
             if(!err){
                 var id = req["me"]["__id"];
-                if (r.user2.toString() == id.toString()) {
-                    r.status = type;
-                    r.save(function(er,rslt){
+                if (result.user2.toString() == id.toString()) {
+                    result.status = type;
+                    result.save(function(er,rslt){
                         res.status(200).json({ status: true,result:{}})
                     });
                 } else {
