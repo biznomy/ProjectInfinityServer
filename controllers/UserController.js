@@ -71,11 +71,11 @@ module.exports = {
     },
     _list: function(req, res, ids,typ) {
          var page = req.query.page ? req.query.page - 1 : 0,
-            limit = req.query.limit ? req.query.limit : 10,
+            limit = req.query.limit ? req.query.limit : 20,
             skip = page * limit;
         var select = "_id name photoURL email gender";
         var q ={ "_id": ids };
-        UserModel.find(q).select(select).skip(Number(skip)).limit(Number(limit)).exec(function(err, suggestion) {
+        UserModel.count(q,function(err,count){
             if(err){
                 return res.status(500).json({
                     status: false,
@@ -83,8 +83,19 @@ module.exports = {
                     error: err
                 });
             }
-            UserModel.count(q).exec(function(e, count) {
-                return res.json({ 'status': true, 'result': suggestion, 'count': count ,type:typ});
+            //count = count < 20?count:count - 20
+            skip =  Math.floor(Math.random() * (count - 1 + 1)) + 1;
+            UserModel.find(q).select(select).skip(Number(skip)).limit(Number(limit)).exec(function(err, suggestion) {
+                if(err){
+                    return res.status(500).json({
+                        status: false,
+                        message: 'Error when getting suggestion.',
+                        error: err
+                    });
+                }
+                UserModel.count(q).exec(function(e, count) {
+                    return res.json({ 'status': true, 'result': suggestion, 'count': count ,type:typ});
+                });
             });
         });
     },
@@ -244,9 +255,10 @@ module.exports = {
                     }
                 });
             } else {
+                console.log(name);
                 return res.status(500).json({
-                    result: status,
-                    status: name
+                    result: name,
+                    status: status
                 });
             }
         });

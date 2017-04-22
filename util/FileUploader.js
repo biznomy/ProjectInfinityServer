@@ -19,6 +19,7 @@ var FileUploader = {
         self.store = multer({ "storage": multer.diskStorage(self.option), limits: {fileSize: 1000000, files:1}});
     },
     saveBase64: function(base64Data,path,cb) {
+        //console.log(base64Data);
         if (!base64Data) {
             cb(false);
             return '';
@@ -28,7 +29,6 @@ var FileUploader = {
         imgType = imgType[imgType.length - 1];
         imgType = Date.now() + "." + imgType;
         base64Data = base64Data.replace(/^data:image\/(png|gif|jpeg|svg|webp);base64,/, '');
-        
         fs.writeFile("store/"+path +"/"+ imgType, new Buffer(base64Data, 'base64'), function(err) {
             if(err) {
                 cb(false,err);

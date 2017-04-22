@@ -25,8 +25,8 @@ app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
 
 app.use(logger('dev'));
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({limit: '50mb',extended: true,parameterLimit:50000}));
+app.use(bodyParser.json({limit: '3mb',extended: true,parameterLimit:3000}));
+app.use(bodyParser.urlencoded({limit: '3mb',extended: true,parameterLimit:3000}));
 
 // parse some custom thing into a Buffer
 //app.use(bodyParser.raw({ type: 'application/vnd.custom-type' }))

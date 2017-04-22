@@ -100,7 +100,7 @@ module.exports = {
             frienId = req.params.friendId,
             q = { "$or": [{ "user2": id, "user1": frienId }, { "user2": frienId, "user1": id }] };
 
-        self.findOne(q, function(s,r) {
+        FriendModel.findOne(q, function(s,r) {
             if (s) {
                 var id = req["me"]["__id"];
                 if (r.user2.toString() == id.toString()) {
