@@ -28,8 +28,8 @@ module.exports = {
                 var ids = [];
                 for (var i = 0; i < data.length; i++) {
                     var u1 = '"' + myId + '"',
-                        u2 = '"' + myId + '"';
-                    if (u1 === u2) {
+                        u2 = '"' + data[i].user1 + '"';
+                    if (u1 == u2) {
                         ids.push(data[i].user2);
                     } else {
                         ids.push(data[i].user1);

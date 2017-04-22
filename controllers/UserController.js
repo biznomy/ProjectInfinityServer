@@ -203,11 +203,20 @@ module.exports = {
         }
         FIREBASE.getByUidFromLocal(req, function(rs) {
             if (rs.status && rs.result.regid != '') {
-                req.body["to"] = rs.result.regid;
-                req.body['notification']["icon"] = "/firebase-logo.png";
-                req.body['notification']["click_action"] = "http://localhost/html/FCM/web/social-login/";
-                console.log(req.body);
-                FIREBASE.sendNotification(req.body, function(body) {
+                var payload = { 
+                    data:{
+                        sender:req["me"]["email"],
+                        photoURL:req["me"]["picture"]?req["me"]["picture"]:'',
+                        _id:req["me"]["__id"]?req["me"]["__id"].toString():''
+                    },
+                    notification:{
+                       icon:"/firebase-logo.png",
+                       click_action:"http://localhost/html/FCM/web/social-login/",
+                       title: req.body.notification.title,
+                        body:req.body.notification.body
+                    }
+                 };
+                FIREBASE.sendPushNotification([rs.result.regid],payload, function(body) {
                     res.status(200).json(body);
                 });
             } else {
@@ -217,7 +226,7 @@ module.exports = {
                 }
                 res.status(200).json(rs);
             }
-        }, req["me"]["uid"],req["me"]["email"]);
+        }, req.body["uid"],req.body["email"]);
     },
     saveOrUpdate: function(req, res) {
         if (req.error) {

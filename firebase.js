@@ -36,7 +36,7 @@ var FIREBASE = {
             method: "POST",
             json: true,
             headers: {
-                "authorization": CONSTANT.MONGO_SERVER,
+                "authorization": "",
                 "content-type": "application/json",
             },
             body: msgBody
