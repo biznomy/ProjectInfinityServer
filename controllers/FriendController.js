@@ -100,7 +100,7 @@ module.exports = {
             frienId = req.params.friendId,
             q = { "$or": [{ "user2": id, "user1": frienId }, { "user2": frienId, "user1": id }] };
 
-        FriendModel.find(q, function(err,result) {
+        FriendModel.findOne(q, function(err,result) {
             if(!err){
                 var id = req["me"]["__id"],us2 = "'"+result.user2+"'";
                 id = "'"+id+"'";
