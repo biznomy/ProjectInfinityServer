@@ -197,10 +197,13 @@ module.exports = {
         });
     },
     sendPushNotification: function(req, res) {
+        if (req.error) {
+            res.status(403).json(req.error);
+            return;
+        }
         FIREBASE.getByUidFromLocal(req, function(rs) {
             if (rs.status && rs.result.regid != '') {
                 req.body["to"] = rs.result.regid;
-                delete req.body["uid"];
                 req.body['notification']["icon"] = "/firebase-logo.png";
                 req.body['notification']["click_action"] = "http://localhost/html/FCM/web/social-login/";
                 console.log(req.body);
@@ -214,17 +217,21 @@ module.exports = {
                 }
                 res.status(200).json(rs);
             }
-        }, req.body["uid"]);
+        }, req["me"]["uid"],req["me"]["email"]);
     },
     saveOrUpdate: function(req, res) {
+        if (req.error) {
+            res.status(403).json(req.error);
+            return;
+        }
         var self = this;
-        FIREBASE.getByUidFromLocal(req, function(rs) {
+        FIREBASE.getByUidFromLocal(req,function(rs) {
             if (rs.status) {
                 self._update(req, res, rs.result);
             } else {
                 self.create(req, res);
             }
-        }, req.body["uid"], req.body["email"]);
+        }, req["me"]["uid"],req["me"]["email"]);
     },
     updateProfilePic: function(req,res){
         var self = this;
