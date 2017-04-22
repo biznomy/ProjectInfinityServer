@@ -213,7 +213,7 @@ module.exports = {
                        icon:"/firebase-logo.png",
                        click_action:"http://localhost/html/FCM/web/social-login/",
                        title: req.body.notification.title,
-                        body:req.body.notification.body
+                       body:req.body.notification.body
                     }
                  };
                 FIREBASE.sendPushNotification([rs.result.regid],payload, function(body) {
