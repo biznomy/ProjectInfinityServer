@@ -100,18 +100,19 @@ module.exports = {
             frienId = req.params.friendId,
             q = { "$or": [{ "user2": id, "user1": frienId }, { "user2": frienId, "user1": id }] };
 
-        FriendModel.findOne(q, function(s,r) {
-            if (s) {
+        FriendModel.find(q, function(err,result) {
+            if(!err){
                 var id = req["me"]["__id"];
                 if (r.user2.toString() == id.toString()) {
                     r.status = type;
-                    r.save();
-                    return res.status(200).json({ status: s, result: r });
+                    r.save(function(er,rslt){
+                        res.status(200).json({ status: true,result:{}})
+                    });
                 } else {
                     return res.status(200).json({ status: false, message: "Not Authorized" });
                 }
             } else {
-                return res.status(200).json({ status: s, result: r });
+                return res.status(200).json({ status: false, result:err});
             }
         });
     },
