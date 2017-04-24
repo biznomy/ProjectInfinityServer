@@ -34,7 +34,7 @@ var Helper = {
     createPost: function(user) {
         var r = Helper.getRandomInt(1,7);
             print("Creating "+r+" Post For " +user._id);
-        var q = GooglePlusPosts.find().limit(r).skip(_rand());
+        var q = GooglePlusPosts.find().limit(r).skip(Helper.getRandomInt(0, GooglePlusPosts.count()-1));
         while (q.hasNext()) {
             var GOOGLE_POST = q.next();
             if (GOOGLE_POST.img && GOOGLE_POST.img != "") {
