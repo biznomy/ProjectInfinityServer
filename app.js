@@ -18,6 +18,7 @@ var Likes = require('./routes/Likes');
 var Comments = require('./routes/Comments');
 var Friends = require('./routes/Friends');
 var Fcm = require('./routes/Fcm');
+var Admin = require('./routes/AdminRoutes');
 
 
 // view engine setup
@@ -66,6 +67,13 @@ app.use('/post', Posts);
 app.use('/like', Likes);
 app.use('/comment', Comments);
 app.use('/friend', Friends);
+app.use('/admin', Admin);
+app.use("/uploads/:imagename", function(req, res, next){
+    //console.log(req.params.imagename);
+    var img = fs.readFileSync('./uploads/'+req.params.imagename);
+    res.writeHead(200, {'Content-Type': 'image/*' });
+    res.end(img, 'binary');    
+});
 
 app.use("/store/:type/:name", function(req, res, next){
     var extn = req.params.name;
