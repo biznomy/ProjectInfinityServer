@@ -242,6 +242,7 @@ module.exports = {
                     PostModel.find({ "created_by": _ids })
                         .limit(10)
                         .populate(['files'])
+                        .sort({ "created_at": -1 })
                         .exec(function(err, dataP) {
                             if (err) {
                                 return res.status(500).json({
@@ -413,7 +414,7 @@ module.exports = {
         });       
         
     },
-    update: function(req, res) {
+    updatePost: function(req, res) {
         var id = req.params.id;
         PostModel.findOne({ _id: id }, function(err, Post) {
             if (err) {

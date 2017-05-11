@@ -23,7 +23,7 @@ router.get('/post/user/:id', AdminController.postSearch);
 
 router.get('/post', AdminController.post);
 
-router.put('/post/update/:id', AdminController.update);
+router.put('/post/update/:id', AdminController.updatePost);
 
 
 //Comment
