@@ -23,6 +23,8 @@ router.get('/post/user/:id', AdminController.postSearch);
 
 router.get('/post', AdminController.post);
 
+router.put('/post/update/:id', AdminController.update);
+
 
 //Comment
 router.get('/comment/count', AdminController.commentCount);

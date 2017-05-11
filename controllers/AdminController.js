@@ -412,5 +412,39 @@ module.exports = {
             return res.json(data);
         });       
         
+    },
+    update: function(req, res) {
+        var id = req.params.id;
+        PostModel.findOne({ _id: id }, function(err, Post) {
+            if (err) {
+                return res.status(500).json({
+                    message: 'Error when getting Post',
+                    error: err
+                });
+            }
+            if (!Post) {
+                return res.status(404).json({
+                    message: 'No such Post'
+                });
+            }
+
+            Post.description = req.body.description ? req.body.description : Post.description;
+            Post.files = req.body.files ? req.body.files : Post.files;
+            Post.created_by = req.body.created_by ? req.body.created_by : Post.created_by;
+            Post.created_at = req.body.created_at ? req.body.created_at : Post.created_at;
+            Post.like_count = req.body.like_count ? req.body.like_count : Post.like_count;
+            Post.comment_count = req.body.comment_count ? req.body.comment_count : Post.comment_count;
+
+            Post.save(function(err, Post) {
+                if (err) {
+                    return res.status(500).json({
+                        message: 'Error when updating Post.',
+                        error: err
+                    });
+                }
+
+                return res.json(Post);
+            });
+        });
     }
 };
