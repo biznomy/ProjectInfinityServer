@@ -168,7 +168,7 @@ module.exports = {
                 return res.json({ "data": data, "count": count });
             })
 
-        }).limit(20).populate(['files']);
+        }).limit(20).sort({ "created_at": -1 }).populate(['files']);
     },
 
     dashboard: function(req, res) {
